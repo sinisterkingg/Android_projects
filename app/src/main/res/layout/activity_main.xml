@@ -4,7 +4,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".MainActivity">
+    tools:context=".MainActivity"
+    android:background="@drawable/bground">
 
     <androidx.recyclerview.widget.RecyclerView
         android:layout_width="match_parent"
@@ -13,13 +14,15 @@
         android:layout_above="@id/bottomlayout"/>
 
     <TextView
+        android:id="@+id/screen_text"
+        android:fontFamily="cursive"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_centerInParent="true"
-        android:textSize="25dp"
+        android:gravity="center"
+        android:textColor="@color/white"
         android:text="Welcome to personal AI Assistance\n Try it out now..."
-        android:id="@+id/screen_text"
-        android:gravity="center"/>
+        android:textSize="25dp" />
 
     <RelativeLayout
         android:layout_width="match_parent"

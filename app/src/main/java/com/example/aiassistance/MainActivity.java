@@ -20,6 +20,7 @@ import org.json.JSONObject;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import okhttp3.Call;
 import okhttp3.Callback;
@@ -39,8 +40,11 @@ public class MainActivity extends AppCompatActivity {
     messageadaptor messageadapter;
     public static final MediaType JSON
             = MediaType.get("application/json; charset=utf-8");
+    OkHttpClient client = new OkHttpClient.Builder()
+            .readTimeout(60, TimeUnit.SECONDS)
+            .build();
 
-    OkHttpClient client = new OkHttpClient();
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -94,17 +98,24 @@ public class MainActivity extends AppCompatActivity {
         messageList.add(new message("Typing...", message.SENT_BY_AI));
         JSONObject jsonbody = new JSONObject();
         try {
-            jsonbody.put("model" , "text-davinci-003");
-            jsonbody.put("prompt", Question);
-            jsonbody.put("max_tokens", 4000);
-            jsonbody.put("temperature",0);
+           jsonbody.put("model", "gpt-3.5-turbo");
+
+           JSONArray messagearr = new JSONArray();
+           JSONObject obj = new JSONObject();
+           obj.put("role", "user");
+           obj.put("content", Question);
+           messagearr.put(obj);
+
+
+           jsonbody.put("messages", messagearr);
+
         } catch (JSONException e) {
             throw new RuntimeException(e);
         }
         RequestBody body = RequestBody.create(jsonbody.toString(),JSON);
         Request request = new Request.Builder()
-                .url("https://api.openai.com/v1/completions")
-                .header("Authorization", "Bearer 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")
+                .url("https://api.openai.com/v1/chat/completions")
+                .header("Authorization", "Bearer use your own api key of turbo 3.5")
                 .post(body)
                 .build();
 
@@ -123,7 +134,9 @@ public class MainActivity extends AppCompatActivity {
                     try {
                         jsonObject = new JSONObject(response.body().string());
                         JSONArray jsonArray = jsonObject.getJSONArray("choices");
-                        String result = jsonArray.getJSONObject(0).getString("text");
+                        String result = jsonArray.getJSONObject(0)
+                                        .getJSONObject("message")
+                                                .getString("content");
                         addresponse(result.trim());
                     } catch (JSONException e) {
                         throw new RuntimeException(e);
